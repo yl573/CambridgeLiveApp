@@ -1,22 +1,36 @@
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-<script>
-  var socket = io('http://localhost:3000');
-
-  // socket.emit('subscribe');
-
-  socket.on('color_update', function (color_data) {
-  	console.log(color_data);
-  	var panel = document.getElementById("panel");
-		var context = panel.getContext("2d");
-		context.fillStyle=color_data.color;
-		context.fillRect(0,0,300,300);
-  })
-</script>
 
 
 <html>
-   <body>
-   	<canvas id='panel' width="300" height="300" style="border:1px solid #d3d3d3;">  	
-   	</canvas>
-   </body>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <canvas id='panel' width="1250" height="1000" style="border:1px solid #d3d3d3;">    
+    </canvas>
+
+    <script>
+      var socket = io('http://localhost:5000');
+
+      $( document ).ready(function() {
+        var panel = document.getElementById("panel");
+        var context = panel.getContext("2d");
+
+        socket.emit('connect');
+
+        socket.on('confirm', function () {
+          console.log("connection established")
+        })
+
+        socket.on('color_update', function (color_data) {
+          console.log(color_data.color)
+          var panel = document.getElementById("panel");
+          var context = panel.getContext("2d");
+          context.fillStyle= color_data.color
+          context.fillRect(0,0,1250,1000);
+        })
+      });
+
+</script>
+  </body>
 </html>

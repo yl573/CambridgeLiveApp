@@ -2,26 +2,34 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-var color = "red";
+var spawn = require("child_process").spawn;
+
+
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function (socket) {
-  socket.emit('color_update', { color: 'red' });
 
-  setInterval(function(){
-		socket.emit('color_update', { color: color });
-		if(color == "red")
-			color = "blue"
-		else
-			color = "red"
-	}, 100);
+io.on('connection', function (socket) {
+
+		var data_string
+		console.log("connected")
+		var process = spawn('python',["audio.py"]);
+		process.stdout.on('data', function (data){
+			console.log("data")
+			console.log(data.toString())
+			data_string = data.toString()
+		});
+
+		var interval = setInterval(function(str1, str2) {
+		  socket.emit('color_update', { color: data_string});
+		}, 100);
+
 });
 
-server.listen(3000, function() {
-	console.log("server running on port 3000")
+server.listen(5000, function() {
+	console.log("server running on port 5000")
 });
 
 
